@@ -4,7 +4,12 @@
     "outDir": "dist",
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2023"],
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@devora/core": ["../core/index.ts"],
+      "@google/gemini-cli-core": ["../core/index.ts"]
+    }
   },
   "include": [
     "index.ts",
