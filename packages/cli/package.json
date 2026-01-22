@@ -10,7 +10,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "devora": "dist/index.js"
+    "devo": "dist/index.js"
   },
   "scripts": {
     "build": "node ../../scripts/build_package.js",

@@ -5,21 +5,23 @@
 ## 🆕 Features
 
 - ✅ **No Google authentication required** when using external providers
-- ✅ **Interactive `/provider` command** - Configure providers directly in the CLI
+- ✅ **Interactive `/provider` command** - Configure providers directly in the
+  CLI
 - ✅ **Z.AI support** with GLM-4.7 model
 - ✅ **OpenRouter support** for 100+ models
 - ✅ **Ollama support** for local inference
 - ✅ **LM Studio support** for local models
 - ✅ **12 pre-configured providers** with dynamic model fetching
 - ✅ Streaming and function/tool calling support
-- ✅ **Automatic agent routing** - Complex tasks automatically delegated to specialized agents
+- ✅ **Automatic agent routing** - Complex tasks automatically delegated to
+  specialized agents
 
 ## 🚀 Quick Start
 
 ```bash
 # 1. Clone this repo
-git clone https://github.com/uglyswap/devora-cli
-cd devora-cli
+git clone https://github.com/uglyswap/devo-cli
+cd devo-cli
 
 # 2. Install and build
 npm install
@@ -29,12 +31,12 @@ npm run build
 npm link
 
 # 4. Run Devora (setup will prompt for your ZAI_API_KEY on first run)
-devora
+devo
 ```
 
 ### 🎯 What happens on first run?
 
-When you run `devora` for the first time:
+When you run `devo` for the first time:
 
 1. **Welcome screen appears** with Devora CLI logo
 2. **Prompts for your ZAI_API_KEY** (get it at https://docs.z.ai)
@@ -48,7 +50,8 @@ When you run `devora` for the first time:
 
 ## ⚙️ Interactive Provider Configuration
 
-The easiest way to configure providers is through the interactive `/provider` command:
+The easiest way to configure providers is through the interactive `/provider`
+command:
 
 ```bash
 # Open the configuration dialog
@@ -92,7 +95,7 @@ The easiest way to configure providers is through the interactive `/provider` co
 ```bash
 export OPENAI_COMPATIBLE_API_KEY="your_zai_key"
 export OPENAI_COMPATIBLE_BASE_URL="https://api.z.ai/api/coding/paas/v4"
-devora
+devo
 ```
 
 ### Option 2: OpenRouter (100+ Models)
@@ -101,7 +104,7 @@ devora
 export OPENAI_COMPATIBLE_API_KEY="sk-or-v1-..."
 export OPENAI_COMPATIBLE_BASE_URL="https://openrouter.ai/api/v1"
 export OPENAI_COMPATIBLE_MODEL="anthropic/claude-3.5-sonnet"
-devora
+devo
 ```
 
 ### Option 3: Ollama (Local, Free)
@@ -111,7 +114,7 @@ devora
 export OPENAI_COMPATIBLE_BASE_URL="http://localhost:11434/v1"
 export OPENAI_COMPATIBLE_API_KEY="ollama"
 export OPENAI_COMPATIBLE_MODEL="llama3.2"
-devora
+devo
 ```
 
 ### Option 4: LM Studio (Local)
@@ -119,7 +122,7 @@ devora
 ```bash
 export OPENAI_COMPATIBLE_BASE_URL="http://localhost:1234/v1"
 export OPENAI_COMPATIBLE_API_KEY="lm-studio"
-devora
+devo
 ```
 
 ## 📋 Environment Variables
@@ -137,11 +140,11 @@ devora
 ### From Source
 
 ```bash
-git clone https://github.com/uglyswap/devora-cli
-cd devora-cli
+git clone https://github.com/uglyswap/devo-cli
+cd devo-cli
 npm install
 npm run build
-npm link  # Install globally as "devora" command
+npm link  # Install globally as "devo" command
 ```
 
 ### Pre-requisites
@@ -153,12 +156,12 @@ npm link  # Install globally as "devora" command
 
 DEVORA CLI automatically configures **4 Zai MCP servers** on first run:
 
-| Server            | Description                                 |
-| ----------------- | ------------------------------------------- |
-| `zai-vision`      | Image analysis with GLM-4.7                 |
-| `zai-web-reader`  | Fetch and convert web pages to markdown     |
-| `zai-zread`       | GitHub repository analysis                  |
-| `zai-web-search`  | Web search with structured results          |
+| Server           | Description                             |
+| ---------------- | --------------------------------------- |
+| `zai-vision`     | Image analysis with GLM-4.7             |
+| `zai-web-reader` | Fetch and convert web pages to markdown |
+| `zai-zread`      | GitHub repository analysis              |
+| `zai-web-search` | Web search with structured results      |
 
 ### Configure Zai (API Key & Model)
 
@@ -168,23 +171,23 @@ Use the `/zai` command in Devora CLI to:
 - **Change your model** (choose from latest Zai models)
 
 ```bash
-devora
+devo
 /zai
 ```
 
 ### Available Zai Models
 
-| Model           | Description                          |
-| --------------- | ------------------------------------ |
-| `glm-4.7`       | Default - Best for coding           |
-| `glm-4.7-plus`  | Enhanced capabilities               |
-| `glm-4.7-flash` | Fast responses                      |
-| `glm-4-air`     | Lightweight & fast                  |
+| Model           | Description               |
+| --------------- | ------------------------- |
+| `glm-4.7`       | Default - Best for coding |
+| `glm-4.7-plus`  | Enhanced capabilities     |
+| `glm-4.7-flash` | Fast responses            |
+| `glm-4-air`     | Lightweight & fast        |
 
 ### Check MCP Status
 
 ```bash
-devora
+devo
 /mcp list
 ```
 
@@ -216,15 +219,18 @@ devora
 
 ## 🤖 Agentic Mode
 
-DEVORA includes an **enhanced multi-agent orchestration system** that's **enabled by default**.
+DEVORA includes an **enhanced multi-agent orchestration system** that's
+**enabled by default**.
 
 ### What is Agentic Mode?
 
-Agentic mode uses **28 specialized AI agents** organized into **8 domain teams** that work together to complete complex tasks.
+Agentic mode uses **28 specialized AI agents** organized into **8 domain teams**
+that work together to complete complex tasks.
 
 ### 🔄 Automatic Routing
 
-When you send a message, DEVORA **automatically analyzes** your query and routes it to the appropriate specialized agents:
+When you send a message, DEVORA **automatically analyzes** your query and routes
+it to the appropriate specialized agents:
 
 ```
 You: "Create a React component with authentication"
@@ -240,14 +246,17 @@ You: "Create a React component with authentication"
 
 ### 🏗️ Agent Teams
 
-- 🎨 **Frontend Team** (5 agents) - React, TypeScript, UI/UX, Accessibility, Performance
-- ⚙️ **Backend Team** (5 agents) - APIs, Architecture, Microservices, Integration, GraphQL
+- 🎨 **Frontend Team** (5 agents) - React, TypeScript, UI/UX, Accessibility,
+  Performance
+- ⚙️ **Backend Team** (5 agents) - APIs, Architecture, Microservices,
+  Integration, GraphQL
 - 🗄️ **Database Team** (3 agents) - PostgreSQL, Query Optimization, Migrations
 - 🔒 **Security Team** (3 agents) - OWASP, Penetration Testing, Compliance
 - 🧪 **Testing Team** (3 agents) - Unit Tests, E2E, Code Review
 - 🚀 **DevOps Team** (3 agents) - Docker, Kubernetes, CI/CD
 - 🤖 **AI/ML Team** (3 agents) - LLM APIs, MLOps, Prompt Engineering
-- 📚 **Documentation Team** (3 agents) - Technical Writing, API Docs, Architecture
+- 📚 **Documentation Team** (3 agents) - Technical Writing, API Docs,
+  Architecture
 
 ### ⚡ Execution Modes
 
@@ -269,7 +278,8 @@ export DEVORA_EXECUTION_MODE=confidence
 
 **CONFIDENCE mode** (default) ensures:
 
-- Implicit consensus through domain-ordered execution (security → database → backend → frontend → testing → docs)
+- Implicit consensus through domain-ordered execution (security → database →
+  backend → frontend → testing → docs)
 - Full quality gate validation
 - DiffValidator for code change verification
 - Best for **perfect code** quality
@@ -297,27 +307,27 @@ This ensures proper dependency order while maximizing parallelism.
 ### Start in current directory
 
 ```bash
-devora
+devo
 ```
 
 ### Use specific model
 
 ```bash
-devora -m gemini-2.5-flash
+devo -m gemini-2.5-flash
 # or with Z.AI
-devora -m glm-4.7
+devo -m glm-4.7
 ```
 
 ### Non-interactive mode
 
 ```bash
-devora -p "Explain the architecture of this codebase"
+devo -p "Explain the architecture of this codebase"
 ```
 
 ### JSON output for scripts
 
 ```bash
-devora -p "List all functions" --output-format json
+devo -p "List all functions" --output-format json
 ```
 
 ## 📚 Documentation
@@ -335,7 +345,9 @@ devora -p "List all functions" --output-format json
 
 ## 🤝 Contributing
 
-Contributions welcome! Based on the original [Gemini CLI](https://github.com/google-gemini/gemini-cli) which is Apache 2.0 licensed.
+Contributions welcome! Based on the original
+[Gemini CLI](https://github.com/google-gemini/gemini-cli) which is Apache 2.0
+licensed.
 
 ## 📄 License
 
