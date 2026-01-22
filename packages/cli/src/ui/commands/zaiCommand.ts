@@ -63,7 +63,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-vision'].env) {
       settings.mcpServers['zai-vision'].env = {};
     }
-    settings.mcpServers['zai-vision'].env!['Z_AI_API_KEY'] = apiKey;
+    settings.mcpServers['zai-vision'].env['Z_AI_API_KEY'] = apiKey;
   } else {
     settings.mcpServers['zai-vision'] = {
       description: 'Zai Vision MCP Server - Image analysis with GLM-4.7',
@@ -84,7 +84,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-web-reader'].headers) {
       settings.mcpServers['zai-web-reader'].headers = {};
     }
-    settings.mcpServers['zai-web-reader'].headers!['Authorization'] =
+    settings.mcpServers['zai-web-reader'].headers['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-web-reader'] = {
@@ -105,7 +105,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-zread'].headers) {
       settings.mcpServers['zai-zread'].headers = {};
     }
-    settings.mcpServers['zai-zread'].headers!['Authorization'] =
+    settings.mcpServers['zai-zread'].headers['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-zread'] = {
@@ -125,7 +125,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-web-search'].headers) {
       settings.mcpServers['zai-web-search'].headers = {};
     }
-    settings.mcpServers['zai-web-search'].headers!['Authorization'] =
+    settings.mcpServers['zai-web-search'].headers['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-web-search'] = {

@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable no-console -- Console output is intentional for first-run setup UX */
+
 /**
  * Devora CLI - First Run Setup
  *
