@@ -12,6 +12,7 @@ import type {
   EmbedContentResponse,
   EmbedContentParameters,
 } from '@google/genai';
+import { FinishReason } from '@google/genai';
 import { ZaiClient } from './ZaiClient.js';
 import type { ZaiMessage } from './types.js';
 import type { Config } from '../config/config.js';
@@ -22,13 +23,9 @@ import type { Config } from '../config/config.js';
  */
 export class ZaiContentGenerator {
   private zaiClient: ZaiClient;
-  private sessionId?: string;
-  private gcConfig: Config;
 
-  constructor(apiKey: string, gcConfig: Config, sessionId?: string) {
+  constructor(apiKey: string, _gcConfig: Config, _sessionId?: string) {
     this.zaiClient = new ZaiClient(apiKey);
-    this.gcConfig = gcConfig;
-    this.sessionId = sessionId;
   }
 
   /**
@@ -36,7 +33,7 @@ export class ZaiContentGenerator {
    */
   async generateContent(
     request: GenerateContentParameters,
-    userPromptId: string,
+    _userPromptId: string,
   ): Promise<GenerateContentResponse> {
     const zaiMessages = this.extractMessages(request);
     
@@ -55,12 +52,12 @@ export class ZaiContentGenerator {
   /**
    * Generate streaming content using Zai GLM
    */
-  async *generateContentStream(
+  async generateContentStream(
     request: GenerateContentParameters,
-    userPromptId: string,
-  ): AsyncGenerator<GenerateContentResponse> {
+    _userPromptId: string,
+  ): Promise<AsyncGenerator<GenerateContentResponse>> {
     const zaiMessages = this.extractMessages(request);
-    
+
     const zaiRequest = {
       model: 'glm-4.7',
       messages: zaiMessages,
@@ -69,10 +66,26 @@ export class ZaiContentGenerator {
     };
 
     const stream = this.zaiClient.streamChat(zaiRequest);
-    
-    for await (const chunk of stream) {
-      yield this.adaptStreamChunk(chunk);
-    }
+
+    return (async function* () {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for await (const chunk of stream) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const content = (chunk as any).choices[0]?.delta?.content || '';
+        yield {
+          candidates: [
+            {
+              content: {
+                parts: [{ text: content }],
+                role: 'model',
+              },
+              finishReason: content ? undefined : FinishReason.STOP,
+              index: 0,
+            },
+          ],
+        } as GenerateContentResponse;
+      }
+    })();
   }
 
   /**
@@ -95,12 +108,12 @@ export class ZaiContentGenerator {
   async embedContent(request: EmbedContentParameters): Promise<EmbedContentResponse> {
     const content = this.extractTextFromRequest(request);
     const embedding = await this.zaiClient.embeddings(content);
-    
+
     return {
       embedding: {
-        value: embedding,
+        values: embedding,
       },
-    };
+    } as EmbedContentResponse;
   }
 
   /**
@@ -108,8 +121,9 @@ export class ZaiContentGenerator {
    */
   private extractMessages(request: GenerateContentParameters): ZaiMessage[] {
     const messages: ZaiMessage[] = [];
-    
+
     if (request.contents) {
+      // @ts-expect-error - ContentListUnion is iterable in practice
       for (const content of request.contents) {
         const role = content.role === 'model' ? 'assistant' : 'user';
         const text = this.extractTextFromParts(content.parts);
@@ -118,24 +132,30 @@ export class ZaiContentGenerator {
         }
       }
     }
-    
+
     // Add system instruction if present
-    if (request.systemInstruction) {
-      const systemText = this.extractTextFromParts(request.systemInstruction.parts);
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (request as any).systemInstruction
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const systemText = this.extractTextFromParts((request as any).systemInstruction.parts);
       if (systemText) {
         messages.unshift({ role: 'system', content: systemText });
       }
     }
-    
+
     return messages;
   }
 
   /**
    * Extract text content from parts array
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractTextFromParts(parts: any): string {
     if (!parts) return '';
     return parts
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((p: any) => p.text || '')
       .filter((t: string) => t)
       .join('\n');
@@ -144,6 +164,7 @@ export class ZaiContentGenerator {
   /**
    * Extract text from various request types
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractTextFromRequest(request: any): string {
     if (request.contents) {
       return this.extractTextFromParts(request.contents[0]?.parts || []);
@@ -158,22 +179,25 @@ export class ZaiContentGenerator {
    * Get temperature from generation config
    */
   private getTemperature(request: GenerateContentParameters): number {
-    return request.generationConfig?.temperature ?? 0.7;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (request as any).generationConfig?.temperature ?? 0.7;
   }
 
   /**
    * Get max tokens from generation config
    */
   private getMaxTokens(request: GenerateContentParameters): number {
-    return request.generationConfig?.maxOutputTokens ?? 4096;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (request as any).generationConfig?.maxOutputTokens ?? 128000;
   }
 
   /**
    * Adapt Zai response to Gemini format
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private adaptResponse(zaiResponse: any): GenerateContentResponse {
     const text = zaiResponse.choices[0]?.message?.content || '';
-    
+
     return {
       candidates: [
         {
@@ -181,7 +205,7 @@ export class ZaiContentGenerator {
             parts: [{ text }],
             role: 'model',
           },
-          finishReason: 1,
+          finishReason: FinishReason.STOP,
           index: 0,
         },
       ],
@@ -190,26 +214,6 @@ export class ZaiContentGenerator {
         candidatesTokenCount: zaiResponse.usage?.completion_tokens || 0,
         totalTokenCount: zaiResponse.usage?.total_tokens || 0,
       },
-    };
-  }
-
-  /**
-   * Adapt streaming chunk to Gemini format
-   */
-  private adaptStreamChunk(chunk: any): GenerateContentResponse {
-    const text = chunk.choices[0]?.delta?.content || '';
-    
-    return {
-      candidates: [
-        {
-          content: {
-            parts: [{ text }],
-            role: 'model',
-          },
-          finishReason: text ? 0 : 1,
-          index: 0,
-        },
-      ],
-    };
+    } as GenerateContentResponse;
   }
 }

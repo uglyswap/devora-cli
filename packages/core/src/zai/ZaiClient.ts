@@ -8,8 +8,6 @@ import OpenAI from 'openai';
 import type {
   ZaiChatRequest,
   ZaiChatResponse,
-  ZaiEmbeddingRequest,
-  ZaiEmbeddingResponse,
 } from './types.js';
 
 /**
@@ -46,7 +44,7 @@ export class ZaiClient {
   /**
    * Send a streaming chat completion request to Zai GLM
    */
-  async *streamChat(request: ZaiChatRequest): AsyncGenerator<any> {
+  async *streamChat(request: ZaiChatRequest): AsyncGenerator<unknown> {
     const stream = await this.client.chat.completions.create({
       model: this.model,
       messages: request.messages,
