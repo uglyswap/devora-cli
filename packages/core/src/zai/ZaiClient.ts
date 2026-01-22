@@ -14,15 +14,16 @@ import type {
 
 /**
  * Zai API client wrapper using OpenAI SDK with custom base URL
+ * Documentation: https://docs.z.ai/devpack/tool/others
  */
 export class ZaiClient {
   private client: OpenAI;
-  private readonly model = 'glm-4.7';
+  private readonly model = 'GLM-4.7';
 
   constructor(apiKey: string) {
     this.client = new OpenAI({
       apiKey: apiKey,
-      baseURL: 'https://api.z.ai/api/paas/v4/',
+      baseURL: 'https://api.z.ai/api/coding/paas/v4',
     });
   }
 
