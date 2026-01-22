@@ -49,8 +49,6 @@ import { settingsCommand } from '../ui/commands/settingsCommand.js';
 import { vimCommand } from '../ui/commands/vimCommand.js';
 import { setupGithubCommand } from '../ui/commands/setupGithubCommand.js';
 import { terminalSetupCommand } from '../ui/commands/terminalSetupCommand.js';
-import { providerCommand } from '../ui/commands/providerCommand.js';
-import { agenticCommand } from '../ui/commands/agenticCommand.js';
 import { zaiCommand } from '../ui/commands/zaiCommand.js';
 
 /**
@@ -168,8 +166,6 @@ export class BuiltinCommandLoader implements ICommandLoader {
       vimCommand,
       setupGithubCommand,
       terminalSetupCommand,
-      providerCommand,
-      agenticCommand,
       zaiCommand,
     ];
     handle?.end();

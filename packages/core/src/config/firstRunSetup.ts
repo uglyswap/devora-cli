@@ -51,7 +51,7 @@ export function getDevoraSettingsDir(): string {
   return path.dirname(getDevoraSettingsPath());
 }
 
-interface DevoraSettings {
+export interface DevoraSettings {
   zaiApiKey?: string;
   model?: {
     name?: string;
@@ -190,8 +190,8 @@ export async function runFirstRunSetupIfNeeded(): Promise<boolean> {
   }
 
   // Check environment variable as fallback
-  if (process.env.ZAI_API_KEY && process.env.ZAI_API_KEY.length > 10) {
-    const envKey = process.env.ZAI_API_KEY;
+  if (process.env['ZAI_API_KEY'] && process.env['ZAI_API_KEY'].length > 10) {
+    const envKey = process.env['ZAI_API_KEY'];
     const newSettings = createSettingsWithApiKey(envKey);
     saveDevoraSettings(newSettings);
     console.log(
@@ -283,5 +283,5 @@ async function runInteractiveSetup(): Promise<void> {
 
 export function getZaiApiKey(): string | undefined {
   const settings = loadDevoraSettings();
-  return settings.zaiApiKey || process.env.ZAI_API_KEY;
+  return settings.zaiApiKey || process.env['ZAI_API_KEY'];
 }

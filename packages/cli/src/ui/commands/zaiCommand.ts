@@ -5,11 +5,10 @@
  */
 
 import type {
-  SlashCommandSubCommand,
-  type CommandContext,
-  CommandKind,
-  type SlashCommand
+  CommandContext,
+  SlashCommand
 } from './types.js';
+import { CommandKind } from './types.js';
 import * as readline from 'node:readline';
 import {
   loadDevoraSettings,
@@ -64,7 +63,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-vision'].env) {
       settings.mcpServers['zai-vision'].env = {};
     }
-    settings.mcpServers['zai-vision'].env!.Z_AI_API_KEY = apiKey;
+    settings.mcpServers['zai-vision'].env!['Z_AI_API_KEY'] = apiKey;
   } else {
     settings.mcpServers['zai-vision'] = {
       description: 'Zai Vision MCP Server - Image analysis with GLM-4.7',
@@ -85,7 +84,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-web-reader'].headers) {
       settings.mcpServers['zai-web-reader'].headers = {};
     }
-    settings.mcpServers['zai-web-reader'].headers!.Authorization =
+    settings.mcpServers['zai-web-reader'].headers!['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-web-reader'] = {
@@ -106,7 +105,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-zread'].headers) {
       settings.mcpServers['zai-zread'].headers = {};
     }
-    settings.mcpServers['zai-zread'].headers!.Authorization =
+    settings.mcpServers['zai-zread'].headers!['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-zread'] = {
@@ -126,7 +125,7 @@ function updateMcpServersWithApiKey(
     if (!settings.mcpServers['zai-web-search'].headers) {
       settings.mcpServers['zai-web-search'].headers = {};
     }
-    settings.mcpServers['zai-web-search'].headers!.Authorization =
+    settings.mcpServers['zai-web-search'].headers!['Authorization'] =
       `Bearer ${apiKey}`;
   } else {
     settings.mcpServers['zai-web-search'] = {
@@ -144,11 +143,12 @@ function updateMcpServersWithApiKey(
   return settings;
 }
 
-const apiKeySubCommand: SlashCommandSubCommand = {
+const apiKeySubCommand: SlashCommand = {
   name: 'apikey',
+  kind: CommandKind.BUILT_IN,
   description:
     'Update your ZAI_API_KEY (automatically updates all MCP servers)',
-  action: async (context: CommandContext) => {
+  action: async (context: CommandContext, _args: string) => {
     context.ui.addItem(
       {
         type: 'info',
@@ -202,10 +202,11 @@ const apiKeySubCommand: SlashCommandSubCommand = {
   },
 };
 
-const modelSubCommand: SlashCommandSubCommand = {
+const modelSubCommand: SlashCommand = {
   name: 'model',
+  kind: CommandKind.BUILT_IN,
   description: 'Change your Zai model',
-  action: async (context: CommandContext) => {
+  action: async (context: CommandContext, _args: string) => {
     const settings = loadDevoraSettings();
     const currentModel = settings.model?.name || 'glm-4.7';
 
@@ -267,10 +268,11 @@ const modelSubCommand: SlashCommandSubCommand = {
   },
 };
 
-const statusSubCommand: SlashCommandSubCommand = {
+const statusSubCommand: SlashCommand = {
   name: 'status',
+  kind: CommandKind.BUILT_IN,
   description: 'Show current Zai configuration',
-  action: async (context: CommandContext) => {
+  action: async (context: CommandContext, _args: string) => {
     const settings = loadDevoraSettings();
     const currentModel = settings.model?.name || 'glm-4.7';
     const hasApiKey = !!settings.zaiApiKey;
@@ -316,8 +318,8 @@ export const zaiCommand: SlashCommand = {
   kind: CommandKind.BUILT_IN,
   subCommands: [apiKeySubCommand, modelSubCommand, statusSubCommand],
   autoExecute: false,
-  action: async (context: CommandContext) => 
+  action: async (context: CommandContext, _args: string) =>
     // If no subcommand is provided, show status
-     statusSubCommand.action!(context)
+     statusSubCommand.action!(context, _args)
   ,
 };
