@@ -97,6 +97,7 @@ import { isAlternateBufferEnabled } from './ui/hooks/useAlternateBuffer.js';
 import { setupTerminalAndTheme } from './utils/terminalTheme.js';
 import { profiler } from './ui/components/DebugProfiler.js';
 import { runDeferredCommand } from './deferred.js';
+import { runFirstRunSetupIfNeeded } from '@google/gemini-cli-core';
 
 const SLOW_RENDER_MS = 200;
 
@@ -304,6 +305,11 @@ export async function main() {
   const loadSettingsHandle = startupProfiler.start('load_settings');
   const settings = loadSettings();
   loadSettingsHandle?.end();
+
+  // Run first-run setup if ZAI_API_KEY is not configured
+  const setupHandle = startupProfiler.start('first_run_setup');
+  await runFirstRunSetupIfNeeded();
+  setupHandle?.end();
 
   // Report settings errors once during startup
   settings.errors.forEach((error) => {

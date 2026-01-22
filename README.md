@@ -2,239 +2,347 @@
 
 ![Devora CLI](./docs/assets/gemini-screenshot.png)
 
-Devora CLI is an open-source AI agent that brings the power of Zai GLM directly
-into your terminal. It provides lightweight access to advanced AI capabilities,
-giving you the most direct path from your prompt to powerful models.
+## 🆕 Features
 
-## 🚀 Why Devora CLI?
+- ✅ **No Google authentication required** when using external providers
+- ✅ **Interactive `/provider` command** - Configure providers directly in the CLI
+- ✅ **Z.AI support** with GLM-4.7 model
+- ✅ **OpenRouter support** for 100+ models
+- ✅ **Ollama support** for local inference
+- ✅ **LM Studio support** for local models
+- ✅ **12 pre-configured providers** with dynamic model fetching
+- ✅ Streaming and function/tool calling support
+- ✅ **Automatic agent routing** - Complex tasks automatically delegated to specialized agents
 
-- **🎯 Powered by Zai GLM-4.7**: Advanced reasoning with Zai's state-of-the-art model
-- **🧠 High Performance**: Optimized for coding tasks with 1M+ token context window
-- **🔧 Built-in tools**: File operations, shell commands, web fetching, and more
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
-- **💻 Terminal-first**: Designed for developers who live in the command line
-- **🛡️ Open source**: Apache 2.0 licensed, forked from Google Gemini CLI
+## 🚀 Quick Start
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/uglyswap/devora-cli
+cd devora-cli
+
+# 2. Install and build
+npm install
+npm run build
+
+# 3. Link globally
+npm link
+
+# 4. Run Devora (setup will prompt for your ZAI_API_KEY on first run)
+devora
+```
+
+### 🎯 What happens on first run?
+
+When you run `devora` for the first time:
+
+1. **Welcome screen appears** with Devora CLI logo
+2. **Prompts for your ZAI_API_KEY** (get it at https://docs.z.ai)
+3. **Automatically configures everything**:
+   - Saves your API key (no need to re-enter it!)
+   - Sets up 4 MCP servers with your key
+   - Selects default model (glm-4.7)
+4. **You're ready to code!** 🚀
+
+**No config files to edit, no environment variables to set. Just run and go!**
+
+## ⚙️ Interactive Provider Configuration
+
+The easiest way to configure providers is through the interactive `/provider` command:
+
+```bash
+# Open the configuration dialog
+/provider
+
+# Or configure a specific provider directly
+/provider openrouter
+```
+
+### Available Commands
+
+| Command                 | Description                           |
+| ----------------------- | ------------------------------------- |
+| `/provider`             | Open interactive configuration dialog |
+| `/provider list`        | List all configured providers         |
+| `/provider switch <id>` | Switch to a different provider        |
+| `/provider remove <id>` | Remove a provider configuration       |
+| `/provider status`      | Show current provider status          |
+
+### Supported Providers (12)
+
+| Provider          | Type   | Description                         |
+| ----------------- | ------ | ----------------------------------- |
+| **Google Gemini** | Cloud  | Google's Gemini models              |
+| **OpenRouter**    | Cloud  | 100+ models from multiple providers |
+| **Z.AI**          | Cloud  | GLM-4 models                        |
+| **OpenAI**        | Cloud  | GPT-4, GPT-4o, o1 models            |
+| **Anthropic**     | Cloud  | Claude 3.5, Claude 3 models         |
+| **Groq**          | Cloud  | Ultra-fast inference                |
+| **Together AI**   | Cloud  | Open-source models                  |
+| **Mistral AI**    | Cloud  | Mistral Large, Codestral            |
+| **DeepSeek**      | Cloud  | DeepSeek Coder, Chat                |
+| **Ollama**        | Local  | Run models locally                  |
+| **LM Studio**     | Local  | Local model server                  |
+| **Custom**        | Custom | Any OpenAI-compatible endpoint      |
+
+## 🔐 Authentication Options (Environment Variables)
+
+### Option 1: Z.AI (GLM-4.7)
+
+```bash
+export OPENAI_COMPATIBLE_API_KEY="your_zai_key"
+export OPENAI_COMPATIBLE_BASE_URL="https://api.z.ai/api/coding/paas/v4"
+devora
+```
+
+### Option 2: OpenRouter (100+ Models)
+
+```bash
+export OPENAI_COMPATIBLE_API_KEY="sk-or-v1-..."
+export OPENAI_COMPATIBLE_BASE_URL="https://openrouter.ai/api/v1"
+export OPENAI_COMPATIBLE_MODEL="anthropic/claude-3.5-sonnet"
+devora
+```
+
+### Option 3: Ollama (Local, Free)
+
+```bash
+# Start Ollama first: ollama serve
+export OPENAI_COMPATIBLE_BASE_URL="http://localhost:11434/v1"
+export OPENAI_COMPATIBLE_API_KEY="ollama"
+export OPENAI_COMPATIBLE_MODEL="llama3.2"
+devora
+```
+
+### Option 4: LM Studio (Local)
+
+```bash
+export OPENAI_COMPATIBLE_BASE_URL="http://localhost:1234/v1"
+export OPENAI_COMPATIBLE_API_KEY="lm-studio"
+devora
+```
+
+## 📋 Environment Variables
+
+| Variable                     | Required | Description         |
+| ---------------------------- | -------- | ------------------- |
+| `OPENAI_COMPATIBLE_BASE_URL` | Yes\*    | API endpoint URL    |
+| `OPENAI_COMPATIBLE_API_KEY`  | Yes\*    | API key             |
+| `OPENAI_COMPATIBLE_MODEL`    | No       | Override model name |
+
+\*Required only when using OpenAI-compatible providers.
 
 ## 📦 Installation
+
+### From Source
+
+```bash
+git clone https://github.com/uglyswap/devora-cli
+cd devora-cli
+npm install
+npm run build
+npm link  # Install globally as "devora" command
+```
 
 ### Pre-requisites
 
 - Node.js version 20 or higher
 - macOS, Linux, or Windows
-- Zai API key from [z.ai](https://z.ai)
 
-### Quick Install
+## 🔌 Zai MCP Servers & Configuration
 
-#### Run instantly with npx
+DEVORA CLI automatically configures **4 Zai MCP servers** on first run:
 
-```bash
-# Using npx (no installation required)
-npx @devora/cli
-```
+| Server            | Description                                 |
+| ----------------- | ------------------------------------------- |
+| `zai-vision`      | Image analysis with GLM-4.7                 |
+| `zai-web-reader`  | Fetch and convert web pages to markdown     |
+| `zai-zread`       | GitHub repository analysis                  |
+| `zai-web-search`  | Web search with structured results          |
 
-#### Install globally with npm
+### Configure Zai (API Key & Model)
 
-```bash
-npm install -g @devora/cli
-```
+Use the `/zai` command in Devora CLI to:
 
-#### Build from source
-
-```bash
-git clone https://github.com/uglyswap/devora-cli.git
-cd devora-cli
-npm install
-npm run build
-npm link
-```
-
-## 🔐 Authentication
-
-Devora CLI uses Zai API key authentication:
+- **Update your ZAI_API_KEY**
+- **Change your model** (choose from latest Zai models)
 
 ```bash
-# Get your API key from https://z.ai
-export ZAI_API_KEY="your_api_key_here"
-
-# Start Devora CLI
 devora
+/zai
 ```
 
-The CLI will automatically use your Zai API key to authenticate with GLM-4.7.
+### Available Zai Models
 
-## 📋 Key Features
+| Model           | Description                          |
+| --------------- | ------------------------------------ |
+| `glm-4.7`       | Default - Best for coding           |
+| `glm-4.7-plus`  | Enhanced capabilities               |
+| `glm-4.7-flash` | Fast responses                      |
+| `glm-4-air`     | Lightweight & fast                  |
+
+### Check MCP Status
+
+```bash
+devora
+/mcp list
+```
+
+### Documentation
+
+- [Zai MCP Documentation](https://docs.z.ai/devpack/mcp)
+- [Zai Models](https://docs.z.ai/models)
+
+## 📋 Core Features
 
 ### Code Understanding & Generation
 
 - Query and edit large codebases
-- Generate new apps from PDFs, images, or sketches using multimodal capabilities
-- Debug issues and troubleshoot with natural language
+- Generate new apps from PDFs, images, or sketches
+- Debug issues with natural language
 
 ### Automation & Integration
 
-- Automate operational tasks like querying pull requests or handling complex rebases
-- Use MCP servers to connect new capabilities
-- Run non-interactively in scripts for workflow automation
+- Automate operational tasks
+- Use MCP servers for custom integrations
+- Run non-interactively in scripts
 
-### Advanced Capabilities
+### Built-in Tools
 
-- Ground your queries with built-in web search for real-time information
-- Conversation checkpointing to save and resume complex sessions
-- Custom context files (DEVORA.md) to tailor behavior for your projects
+- 🔧 File operations (read, write, edit)
+- 🔧 Shell command execution
+- 🔧 Web fetching and Google Search grounding
+- 🔧 MCP (Model Context Protocol) support
 
-## 🚀 Getting Started
+## 🤖 Agentic Mode
 
-### Basic Usage
+DEVORA includes an **enhanced multi-agent orchestration system** that's **enabled by default**.
 
-#### Start in current directory
+### What is Agentic Mode?
+
+Agentic mode uses **28 specialized AI agents** organized into **8 domain teams** that work together to complete complex tasks.
+
+### 🔄 Automatic Routing
+
+When you send a message, DEVORA **automatically analyzes** your query and routes it to the appropriate specialized agents:
+
+```
+You: "Create a React component with authentication"
+     ↓
+🔍 AgentSelector analyzes keywords → matches Frontend + Security agents
+     ↓
+🤖 HybridModeManager orchestrates multi-agent execution
+     ↓
+📊 ExecutionReport shows agent contributions and results
+```
+
+**No manual intervention needed** - just describe your task naturally!
+
+### 🏗️ Agent Teams
+
+- 🎨 **Frontend Team** (5 agents) - React, TypeScript, UI/UX, Accessibility, Performance
+- ⚙️ **Backend Team** (5 agents) - APIs, Architecture, Microservices, Integration, GraphQL
+- 🗄️ **Database Team** (3 agents) - PostgreSQL, Query Optimization, Migrations
+- 🔒 **Security Team** (3 agents) - OWASP, Penetration Testing, Compliance
+- 🧪 **Testing Team** (3 agents) - Unit Tests, E2E, Code Review
+- 🚀 **DevOps Team** (3 agents) - Docker, Kubernetes, CI/CD
+- 🤖 **AI/ML Team** (3 agents) - LLM APIs, MLOps, Prompt Engineering
+- 📚 **Documentation Team** (3 agents) - Technical Writing, API Docs, Architecture
+
+### ⚡ Execution Modes
+
+DEVORA supports 3 execution modes to balance **speed** vs **quality**:
+
+| Mode         | Description                                                      | Use Case                           |
+| ------------ | ---------------------------------------------------------------- | ---------------------------------- |
+| `SPEED`      | Maximum parallelization, all independent agents run concurrently | Quick prototyping, iterations      |
+| `BALANCED`   | Domain-level parallelization with standard validation            | Regular development                |
+| `CONFIDENCE` | Sequential execution with full validation **(DEFAULT)**          | Production code, critical features |
+
+```bash
+# Set execution mode via environment variable
+export DEVORA_EXECUTION_MODE=confidence
+
+# Or in DEVORA.md configuration
+# executionMode: confidence
+```
+
+**CONFIDENCE mode** (default) ensures:
+
+- Implicit consensus through domain-ordered execution (security → database → backend → frontend → testing → docs)
+- Full quality gate validation
+- DiffValidator for code change verification
+- Best for **perfect code** quality
+
+### 🔄 Parallel Execution
+
+In `SPEED` and `BALANCED` modes, agents are grouped by domain dependencies:
+
+```
+Group 1 (parallel): security + database
+     ↓ (wait)
+Group 2 (parallel): backend + api-architect
+     ↓ (wait)
+Group 3 (parallel): frontend + ui-ux + accessibility
+     ↓ (wait)
+Group 4 (parallel): testing + e2e + code-review
+     ↓ (wait)
+Group 5 (parallel): documentation + devops
+```
+
+This ensures proper dependency order while maximizing parallelism.
+
+## 🚀 Usage Examples
+
+### Start in current directory
 
 ```bash
 devora
 ```
 
-#### Include multiple directories
+### Use specific model
 
 ```bash
-devora --include-directories ../lib,../docs
+devora -m gemini-2.5-flash
+# or with Z.AI
+devora -m glm-4.7
 ```
 
-#### Non-interactive mode for scripts
-
-Get a simple text response:
+### Non-interactive mode
 
 ```bash
 devora -p "Explain the architecture of this codebase"
 ```
 
-For more advanced scripting, including how to parse JSON and handle errors, use
-the `--output-format json` flag to get structured output:
+### JSON output for scripts
 
 ```bash
-devora -p "Explain the architecture of this codebase" --output-format json
+devora -p "List all functions" --output-format json
 ```
-
-For real-time event streaming (useful for monitoring long-running operations),
-use `--output-format stream-json` to get newline-delimited JSON events:
-
-```bash
-devora -p "Run tests and deploy" --output-format stream-json
-```
-
-### Quick Examples
-
-#### Start a new project
-
-```bash
-cd new-project/
-devora
-> Write me a Discord bot that answers questions using a FAQ.md file I will provide
-```
-
-#### Analyze existing code
-
-```bash
-git clone https://github.com/uglyswap/devora-cli
-cd devora-cli
-devora
-> Give me a summary of all of the changes that went in yesterday
-```
-
-## 🔧 Configuration
-
-Create a `~/.devora/settings.json` file to customize Devora CLI:
-
-```json
-{
-  "apiKey": "${ZAI_API_KEY}",
-  "model": "GLM-4.7",
-  "temperature": 0.7,
-  "maxTokens": 4096
-}
-```
-
-### Environment Variables
-
-- `ZAI_API_KEY`: Your Zai API key (required)
-- `DEVORA_MODEL`: Model to use (default: GLM-4.7)
-- `DEVORA_TEMPERATURE`: Response randomness (0-1, default: 0.7)
-- `DEVORA_MAX_TOKENS`: Maximum response tokens (default: 4096)
 
 ## 📚 Documentation
 
-### Getting Started
+- [**Quickstart Guide**](./docs/get-started/index.md)
+- [**Configuration Guide**](./docs/get-started/configuration.md)
+- [**Commands Reference**](./docs/cli/commands.md)
+- [**MCP Server Integration**](./docs/tools/mcp-server.md)
+- [**OpenAI-Compatible Providers Guide**](./docs/OPENAI_COMPATIBLE_PROVIDERS.md)
 
-- **[Quickstart Guide](./docs/get-started/index.md)** - Get up and running quickly
-- **[Authentication Setup](./docs/get-started/authentication.md)** - Detailed auth configuration
-- **[Configuration Guide](./docs/get-started/configuration.md)** - Settings and customization
-- **[Keyboard Shortcuts](./docs/cli/keyboard-shortcuts.md)** - Productivity tips
+## 🔗 Links
 
-### Core Features
-
-- **[Commands Reference](./docs/cli/commands.md)** - All slash commands (`/help`, `/chat`, etc)
-- **[Custom Commands](./docs/cli/custom-commands.md)** - Create your own reusable commands
-- **[Context Files (DEVORA.md)](./docs/cli/gemini-md.md)** - Provide persistent context
-- **[Checkpointing](./docs/cli/checkpointing.md)** - Save and resume conversations
-- **[Token Caching](./docs/cli/token-caching.md)** - Optimize token usage
-
-### Tools & Extensions
-
-- **[Built-in Tools Overview](./docs/tools/index.md)**
-  - [File System Operations](./docs/tools/file-system.md)
-  - [Shell Commands](./docs/tools/shell.md)
-  - [Web Fetch & Search](./docs/tools/web-fetch.md)
-- **[MCP Server Integration](./docs/tools/mcp-server.md)** - Extend with custom tools
-- **[Custom Extensions](./docs/extensions/index.md)** - Build and share your own commands
+- **Z.AI Docs**: [docs.z.ai](https://docs.z.ai)
+- **OpenRouter**: [openrouter.ai](https://openrouter.ai)
 
 ## 🤝 Contributing
 
-We welcome contributions! Devora CLI is fully open source (Apache 2.0), and we
-encourage the community to:
+Contributions welcome! Based on the original [Gemini CLI](https://github.com/google-gemini/gemini-cli) which is Apache 2.0 licensed.
 
-- Report bugs and suggest features
-- Improve documentation
-- Submit code improvements
-- Share your MCP servers and extensions
+## 📄 License
 
-See our [Contributing Guide](./CONTRIBUTING.md) for development setup, coding
-standards, and how to submit pull requests.
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**"ZAI_API_KEY not found"**
-- Make sure you've set your ZAI_API_KEY environment variable
-- Get your API key from https://z.ai
-
-**"Module not found" errors after installation**
-- Try reinstalling with `npm install -g @devora/cli --force`
-- Make sure Node.js 20+ is installed: `node --version`
-
-**Build fails from source**
-- Ensure all dependencies are installed: `npm install`
-- Check that TypeScript compiles: `npm run typecheck`
-
-## 📖 Resources
-
-- **[NPM Package](https://www.npmjs.com/package/@devora/cli)** - Package registry
-- **[GitHub Repository](https://github.com/uglyswap/devora-cli)** - Source code
-- **[GitHub Issues](https://github.com/uglyswap/devora-cli/issues)** - Report bugs or request features
-- **[Zai Documentation](https://docs.z.ai)** - Zai API documentation
-
-## 📄 Legal
-
-- **License**: [Apache License 2.0](LICENSE)
-- **Original Project**: Forked from [Google Gemini CLI](https://github.com/google-gemini/gemini-cli)
-- **Security**: [Security Policy](SECURITY.md)
-
-## 🙏 Acknowledgments
-
-Devora CLI is a fork of Google's excellent Gemini CLI project, adapted to work
-with Zai's GLM-4.7 model. We thank the original Gemini CLI team for building
-such a solid foundation.
+Apache License 2.0 - See [LICENSE](LICENSE)
 
 ---
 
 <p align="center">
-  Built with ❤️ by the open source community | Powered by Zai GLM-4.7
+  <strong>DEVORA CLI</strong> • ⚡ Agentic Coding ⚡
 </p>
