@@ -25,6 +25,12 @@ export const ACTIVATE_SKILL_TOOL_NAME = 'activate_skill';
 export const EDIT_TOOL_NAMES = new Set([EDIT_TOOL_NAME, WRITE_FILE_TOOL_NAME]);
 export const DELEGATE_TO_AGENT_TOOL_NAME = 'delegate_to_agent';
 
+// Sisyphus multi-agent orchestration tools
+export const DELEGATE_TASK_TOOL_NAME = 'delegate_task';
+export const BACKGROUND_TASK_TOOL_NAME = 'background_task';
+export const BACKGROUND_OUTPUT_TOOL_NAME = 'background_output';
+export const BACKGROUND_CANCEL_TOOL_NAME = 'background_cancel';
+
 /** Prefix used for tools discovered via the toolDiscoveryCommand. */
 export const DISCOVERED_TOOL_PREFIX = 'discovered_tool_';
 

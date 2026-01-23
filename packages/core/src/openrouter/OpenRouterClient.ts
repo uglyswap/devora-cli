@@ -20,7 +20,7 @@ export class OpenRouterClient {
 
   constructor(apiKey: string) {
     this.client = new OpenAI({
-      apiKey: apiKey,
+      apiKey,
       baseURL: 'https://openrouter.ai/api/v1',
     });
   }
@@ -80,9 +80,12 @@ export class OpenRouterClient {
    * Generate embeddings using OpenRouter
    * Note: Not all models support embeddings
    */
-  async embeddings(text: string, model: string = 'openai/text-embedding-ada-002'): Promise<number[]> {
+  async embeddings(
+    text: string,
+    model: string = 'openai/text-embedding-ada-002',
+  ): Promise<number[]> {
     const response = await this.client.embeddings.create({
-      model: model,
+      model,
       input: text,
     });
 

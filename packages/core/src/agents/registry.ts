@@ -12,6 +12,11 @@ import { loadAgentsFromDirectory } from './agentLoader.js';
 import { CodebaseInvestigatorAgent } from './codebase-investigator.js';
 import { CliHelpAgent } from './cli-help-agent.js';
 import { GeneralistAgent } from './generalist-agent.js';
+import { SisyphusAgent } from './sisyphus/sisyphus.js';
+import { OracleAgent } from './sisyphus/oracle.js';
+import { ExploreAgent } from './sisyphus/explore.js';
+import { LibrarianAgent } from './sisyphus/librarian.js';
+import { FrontendAgent } from './sisyphus/frontend.js';
 import { A2AClientManager } from './a2a-client-manager.js';
 import { ADCHandler } from './remote-invocation.js';
 import { type z } from 'zod';
@@ -212,6 +217,13 @@ export class AgentRegistry {
 
     // Register the generalist agent.
     this.registerLocalAgent(GeneralistAgent(this.config));
+
+    // Register Sisyphus multi-agent orchestration system
+    this.registerLocalAgent(SisyphusAgent);
+    this.registerLocalAgent(OracleAgent);
+    this.registerLocalAgent(ExploreAgent);
+    this.registerLocalAgent(LibrarianAgent);
+    this.registerLocalAgent(FrontendAgent);
   }
 
   private async refreshAgents(): Promise<void> {

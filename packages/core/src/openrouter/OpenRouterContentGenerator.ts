@@ -30,7 +30,12 @@ export class OpenRouterContentGenerator {
   private openRouterClient: OpenRouterClient;
   private defaultModel: string;
 
-  constructor(apiKey: string, _gcConfig: Config, _sessionId?: string, model?: string) {
+  constructor(
+    apiKey: string,
+    _gcConfig: Config,
+    _sessionId?: string,
+    model?: string,
+  ) {
     this.openRouterClient = new OpenRouterClient(apiKey);
     this.defaultModel = model ?? DEFAULT_OPENROUTER_MODEL;
   }
@@ -62,7 +67,8 @@ export class OpenRouterContentGenerator {
       max_tokens: this.getMaxTokens(request),
     };
 
-    const openRouterResponse = await this.openRouterClient.chat(openRouterRequest);
+    const openRouterResponse =
+      await this.openRouterClient.chat(openRouterRequest);
 
     return this.adaptResponse(openRouterResponse);
   }
@@ -109,7 +115,9 @@ export class OpenRouterContentGenerator {
   /**
    * Count tokens (estimate for OpenRouter)
    */
-  async countTokens(request: CountTokensParameters): Promise<CountTokensResponse> {
+  async countTokens(
+    request: CountTokensParameters,
+  ): Promise<CountTokensResponse> {
     // OpenRouter doesn't have a dedicated token counting endpoint
     // We estimate based on character count (rough approximation)
     const content = this.extractTextFromRequest(request);
@@ -123,7 +131,9 @@ export class OpenRouterContentGenerator {
   /**
    * Generate embeddings using OpenRouter
    */
-  async embedContent(request: EmbedContentParameters): Promise<EmbedContentResponse> {
+  async embedContent(
+    request: EmbedContentParameters,
+  ): Promise<EmbedContentResponse> {
     const content = this.extractTextFromRequest(request);
     const embedding = await this.openRouterClient.embeddings(content);
 
@@ -137,12 +147,16 @@ export class OpenRouterContentGenerator {
   /**
    * Extract messages from Gemini request format
    */
-  private extractMessages(request: GenerateContentParameters): OpenRouterMessage[] {
+  private extractMessages(
+    request: GenerateContentParameters,
+  ): OpenRouterMessage[] {
     const messages: OpenRouterMessage[] = [];
 
     if (request.contents) {
-      // @ts-expect-error - ContentListUnion is iterable in practice
-      for (const content of request.contents) {
+      for (const content of request.contents as unknown as Array<{
+        role?: string;
+        parts?: unknown[];
+      }>) {
         const role = content.role === 'model' ? 'assistant' : 'user';
         const text = this.extractTextFromParts(content.parts);
         if (text) {
@@ -156,8 +170,10 @@ export class OpenRouterContentGenerator {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (request as any).systemInstruction
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const systemText = this.extractTextFromParts((request as any).systemInstruction.parts);
+      const systemText = this.extractTextFromParts(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (request as any).systemInstruction.parts,
+      );
       if (systemText) {
         messages.unshift({ role: 'system', content: systemText });
       }
@@ -172,8 +188,8 @@ export class OpenRouterContentGenerator {
   private extractTextFromParts(parts: unknown): string {
     if (!parts) return '';
     return (parts as Array<{ text?: string }>)
-      .map((p) => p.text || '')
-      .filter((t: string) => t)
+      .map((p: { text?: string }) => p.text || '')
+      .filter((t) => t)
       .join('\n');
   }
 

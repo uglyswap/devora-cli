@@ -174,6 +174,39 @@ export { Storage } from './config/storage.js';
 export * from './zai/index.js';
 export * from './openrouter/index.js';
 
+// Export Sisyphus multi-agent orchestration system
+export * from './tools/sisyphus/index.js';
+export {
+  SisyphusAgent,
+  OracleAgent,
+  ExploreAgent,
+  LibrarianAgent,
+  FrontendAgent,
+  // Re-export types from agents/sisyphus/types.ts (using export type for verbatimModuleSyntax)
+  DEFAULT_CATEGORIES,
+  SISYPHUS_DEFAULTS,
+  MEGAWORK_KEYWORDS,
+  MEGAWORK_SYSTEM_MESSAGE,
+  getMegaworkSystemMessage,
+  SISYPHUS_AGENTS,
+  AGENT_DESCRIPTIONS,
+} from './agents/sisyphus/index.js';
+export type {
+  CategoryConfig,
+  SisyphusConfig,
+  BackgroundTaskArgs,
+  BackgroundOutputArgs,
+  BackgroundCancelArgs,
+  BackgroundTaskStatus,
+  BackgroundTask,
+  SisyphusTodo,
+  AvailableAgent,
+  AvailableTool,
+  AvailableSkill,
+  SisyphusAgentName,
+} from './agents/sisyphus/index.js';
+export * from './hooks/sisyphus/index.js';
+
 // Export hooks system
 export * from './hooks/index.js';
 

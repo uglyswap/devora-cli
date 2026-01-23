@@ -5,10 +5,7 @@
  */
 
 import OpenAI from 'openai';
-import type {
-  ZaiChatRequest,
-  ZaiChatResponse,
-} from './types.js';
+import type { ZaiChatRequest, ZaiChatResponse } from './types.js';
 
 /**
  * Zai API client wrapper using OpenAI SDK with custom base URL
@@ -20,7 +17,7 @@ export class ZaiClient {
 
   constructor(apiKey: string) {
     this.client = new OpenAI({
-      apiKey: apiKey,
+      apiKey,
       baseURL: 'https://api.z.ai/api/coding/paas/v4',
     });
   }

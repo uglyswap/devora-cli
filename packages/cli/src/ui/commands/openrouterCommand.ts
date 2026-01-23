@@ -4,17 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {
-  CommandContext,
-  SlashCommand,
-} from './types.js';
+import type { CommandContext, SlashCommand } from './types.js';
 import { CommandKind } from './types.js';
 import * as readline from 'node:readline';
 import {
   loadDevoraSettings,
   saveDevoraSettings,
+  OpenRouterClient,
 } from '@google/gemini-cli-core';
-import { OpenRouterClient } from '@google/gemini-cli-core';
 
 function promptUser(question: string): Promise<string> {
   const rl = readline.createInterface({
@@ -177,7 +174,8 @@ const modelSubCommand: SlashCommand = {
         );
       }
 
-      const currentModel = settings.model?.name || 'anthropic/claude-3.5-sonnet';
+      const currentModel =
+        settings.model?.name || 'anthropic/claude-3.5-sonnet';
       context.ui.addItem(
         {
           type: 'info',
@@ -192,7 +190,8 @@ const modelSubCommand: SlashCommand = {
 
       if (changeModel) {
         const selectedModel = modelsResponse.data.find(
-          (m: { id: string; name: string }) => m.id === changeModel || m.name === changeModel,
+          (m: { id: string; name: string }) =>
+            m.id === changeModel || m.name === changeModel,
         );
 
         if (selectedModel) {
@@ -308,7 +307,7 @@ const statusSubCommand: SlashCommand = {
       context.ui.addItem(
         {
           type: 'info',
-          text: "2. Run /openrouter apikey to configure it",
+          text: '2. Run /openrouter apikey to configure it',
         },
         Date.now(),
       );

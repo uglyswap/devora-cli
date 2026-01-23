@@ -36,7 +36,7 @@ export class ZaiContentGenerator {
     _userPromptId: string,
   ): Promise<GenerateContentResponse> {
     const zaiMessages = this.extractMessages(request);
-    
+
     const zaiRequest = {
       model: 'glm-4.7',
       messages: zaiMessages,
@@ -45,7 +45,7 @@ export class ZaiContentGenerator {
     };
 
     const zaiResponse = await this.zaiClient.chat(zaiRequest);
-    
+
     return this.adaptResponse(zaiResponse);
   }
 
@@ -68,7 +68,6 @@ export class ZaiContentGenerator {
     const stream = this.zaiClient.streamChat(zaiRequest);
 
     return (async function* () {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for await (const chunk of stream) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const content = (chunk as any).choices[0]?.delta?.content || '';
@@ -91,12 +90,14 @@ export class ZaiContentGenerator {
   /**
    * Count tokens (estimate for Zai)
    */
-  async countTokens(request: CountTokensParameters): Promise<CountTokensResponse> {
+  async countTokens(
+    request: CountTokensParameters,
+  ): Promise<CountTokensResponse> {
     // Zai doesn't have a dedicated token counting endpoint
     // We estimate based on character count (rough approximation)
     const content = this.extractTextFromRequest(request);
     const estimatedTokens = Math.ceil(content.length / 4);
-    
+
     return {
       totalTokens: estimatedTokens,
     };
@@ -105,7 +106,9 @@ export class ZaiContentGenerator {
   /**
    * Generate embeddings using Zai
    */
-  async embedContent(request: EmbedContentParameters): Promise<EmbedContentResponse> {
+  async embedContent(
+    request: EmbedContentParameters,
+  ): Promise<EmbedContentResponse> {
     const content = this.extractTextFromRequest(request);
     const embedding = await this.zaiClient.embeddings(content);
 
@@ -138,8 +141,10 @@ export class ZaiContentGenerator {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (request as any).systemInstruction
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const systemText = this.extractTextFromParts((request as any).systemInstruction.parts);
+      const systemText = this.extractTextFromParts(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (request as any).systemInstruction.parts,
+      );
       if (systemText) {
         messages.unshift({ role: 'system', content: systemText });
       }
@@ -155,8 +160,7 @@ export class ZaiContentGenerator {
   private extractTextFromParts(parts: any): string {
     if (!parts) return '';
     return parts
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((p: any) => p.text || '')
+      .map((p: { text?: string }) => p.text || '')
       .filter((t: string) => t)
       .join('\n');
   }

@@ -51,6 +51,7 @@ import { setupGithubCommand } from '../ui/commands/setupGithubCommand.js';
 import { terminalSetupCommand } from '../ui/commands/terminalSetupCommand.js';
 import { zaiCommand } from '../ui/commands/zaiCommand.js';
 import { openrouterCommand } from '../ui/commands/openrouterCommand.js';
+import { megaworkCommand } from '../ui/commands/megaworkCommand.js';
 
 /**
  * Loads the core, hard-coded slash commands that are an integral part
@@ -169,6 +170,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       terminalSetupCommand,
       zaiCommand,
       openrouterCommand,
+      megaworkCommand,
     ];
     handle?.end();
     return allDefinitions.filter((cmd): cmd is SlashCommand => cmd !== null);
