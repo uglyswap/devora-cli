@@ -136,10 +136,11 @@ const modelSubCommand: SlashCommand = {
         Date.now(),
       );
 
-      // Sort models by name and display top 20
-      const sortedModels = modelsResponse.data
-        .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name))
-        .slice(0, 20);
+      // Sort models alphabetically by name and display ALL models
+      const sortedModels = modelsResponse.data.sort(
+        (a: { name: string }, b: { name: string }) =>
+          a.name.localeCompare(b.name),
+      );
 
       for (const [index, model] of sortedModels.entries()) {
         const currentMarker =
@@ -171,16 +172,6 @@ const modelSubCommand: SlashCommand = {
           {
             type: 'info',
             text: `    Context: ${model.context_length.toLocaleString()} tokens\n`,
-          },
-          Date.now(),
-        );
-      }
-
-      if (modelsResponse.data.length > 20) {
-        context.ui.addItem(
-          {
-            type: 'info',
-            text: `... and ${modelsResponse.data.length - 20} more models\n`,
           },
           Date.now(),
         );
