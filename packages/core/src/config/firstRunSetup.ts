@@ -55,6 +55,7 @@ export function getDevoraSettingsDir(): string {
 
 export interface DevoraSettings {
   zaiApiKey?: string;
+  openrouterApiKey?: string;
   model?: {
     name?: string;
   };

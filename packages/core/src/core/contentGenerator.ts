@@ -25,6 +25,8 @@ import { parseCustomHeaders } from '../utils/customHeaderUtils.js';
 import { RecordingContentGenerator } from './recordingContentGenerator.js';
 import { getVersion, resolveModel } from '../../index.js';
 import { ZaiContentGenerator } from '../zai/ZaiContentGenerator.js';
+import { OpenRouterContentGenerator } from '../openrouter/OpenRouterContentGenerator.js';
+import { loadDevoraSettings } from '../config/firstRunSetup.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -54,6 +56,7 @@ export enum AuthType {
   LEGACY_CLOUD_SHELL = 'cloud-shell',
   COMPUTE_ADC = 'compute-default-credentials',
   ZAI_GLM = 'zai-glm',
+  OPENROUTER = 'openrouter',
 }
 
 export type ContentGeneratorConfig = {
@@ -76,6 +79,13 @@ export async function createContentGeneratorConfig(
     process.env['GOOGLE_CLOUD_PROJECT_ID'] ||
     undefined;
   const googleCloudLocation = process.env['GOOGLE_CLOUD_LOCATION'] || undefined;
+
+  // Load OpenRouter API key from env or settings
+  let openrouterApiKey = process.env['OPENROUTER_API_KEY'] || undefined;
+  if (!openrouterApiKey && authType === AuthType.OPENROUTER) {
+    const settings = loadDevoraSettings();
+    openrouterApiKey = settings.openrouterApiKey;
+  }
 
   const contentGeneratorConfig: ContentGeneratorConfig = {
     authType,
@@ -109,6 +119,13 @@ export async function createContentGeneratorConfig(
 
   if (authType === AuthType.ZAI_GLM && zaiApiKey) {
     contentGeneratorConfig.apiKey = zaiApiKey;
+    contentGeneratorConfig.vertexai = false;
+
+    return contentGeneratorConfig;
+  }
+
+  if (authType === AuthType.OPENROUTER && openrouterApiKey) {
+    contentGeneratorConfig.apiKey = openrouterApiKey;
     contentGeneratorConfig.vertexai = false;
 
     return contentGeneratorConfig;
@@ -196,6 +213,16 @@ export async function createContentGenerator(
     if (config.authType === AuthType.ZAI_GLM) {
       return new LoggingContentGenerator(
         new ZaiContentGenerator(config.apiKey!, gcConfig, sessionId),
+        gcConfig,
+      );
+    }
+
+    if (config.authType === AuthType.OPENROUTER) {
+      // Load settings to get the model if specified
+      const settings = loadDevoraSettings();
+      const model = settings.model?.name;
+      return new LoggingContentGenerator(
+        new OpenRouterContentGenerator(config.apiKey!, gcConfig, sessionId, model),
         gcConfig,
       );
     }
