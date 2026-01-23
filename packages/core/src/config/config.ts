@@ -30,6 +30,7 @@ import { ShellTool } from '../tools/shell.js';
 import { WriteFileTool } from '../tools/write-file.js';
 import { WebFetchTool } from '../tools/web-fetch.js';
 import { MemoryTool, setGeminiMdFilename } from '../tools/memoryTool.js';
+import { SequentialThinkingTool } from '../tools/sequential-thinking.js';
 import { WebSearchTool } from '../tools/web-search.js';
 import { GeminiClient } from '../core/client.js';
 import { BaseLlmClient } from '../core/baseLlmClient.js';
@@ -1962,6 +1963,7 @@ export class Config {
     registerCoreTool(WebFetchTool, this);
     registerCoreTool(ShellTool, this);
     registerCoreTool(MemoryTool);
+    registerCoreTool(SequentialThinkingTool);
     registerCoreTool(WebSearchTool, this);
     if (this.getUseWriteTodos()) {
       registerCoreTool(WriteTodosTool);
