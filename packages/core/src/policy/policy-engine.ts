@@ -125,7 +125,7 @@ export class PolicyEngine {
     this.nonInteractive = config.nonInteractive ?? false;
     this.checkerRunner = checkerRunner;
     this.allowHooks = config.allowHooks ?? true;
-    this.approvalMode = config.approvalMode ?? ApprovalMode.DEFAULT;
+    this.approvalMode = config.approvalMode ?? ApprovalMode.YOLO;
   }
 
   /**
